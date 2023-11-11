@@ -1,0 +1,43 @@
+import { Button, VerticalBox, SpinBox, HorizontalBox, LineEdit} from "std-widgets.slint";
+
+
+component CharacterStat  inherits Rectangle {
+    in property<string> statname: "???";
+    in-out property<int> value <=> statSpinBox.value;
+    
+    HorizontalLayout {        
+        alignment: stretch;
+        Text { text: statname; }
+        statSpinBox := SpinBox { enabled:true; }
+        Button { text:"Roll"; }
+    }
+}
+
+export component AppWindow inherits Window {    
+    in-out property<int> counter: 42;
+
+    in-out property<int> statStr <=> statBoxStr.value;
+    in-out property<int> statDex <=> statBoxDex.value;    
+
+    // in-out property<int> statStr: 0;
+    // in-out property<int> statDex: 0;
+    
+
+    callback request-increase-value();
+    callback print-char();
+    VerticalBox {        
+        statBoxStr := CharacterStat { statname: "STR"; value: 12; }
+        statBoxDex := CharacterStat { statname: "DEX"; value: 14; }
+        statBoxInt := CharacterStat { statname: "INT"; }
+        statBoxWis := CharacterStat { statname: "WIS"; }
+
+        HorizontalBox {             
+            Button {
+                clicked => {
+                    root.print-char();
+                }
+                text: "Print";
+            }
+        }
+     }
+}
