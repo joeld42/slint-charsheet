@@ -3,40 +3,59 @@ import { Button, VerticalBox, SpinBox, HorizontalBox, LineEdit} from "std-widget
 
 component CharacterStat  inherits Rectangle {
     in property<string> statname: "???";
-    in-out property<int> value <=> statSpinBox.value;
+    in-out property<int> value <=> statSpinBox.value;    
+    callback diceroll( string ) -> int;
     
     HorizontalLayout {        
         alignment: stretch;
         Text { text: statname; }
         statSpinBox := SpinBox { enabled:true; }
-        Button { text:"Roll"; }
+        
+        Button { text:"Roll"; 
+            clicked => {
+                value = diceroll( statname );
+            }
+        } 
     }
 }
 
 export component AppWindow inherits Window {    
     in-out property<int> counter: 42;
 
-    in-out property<int> statStr <=> statBoxStr.value;
-    in-out property<int> statDex <=> statBoxDex.value;    
-
-    // in-out property<int> statStr: 0;
-    // in-out property<int> statDex: 0;
+    in-out property<int> statStr : statBoxStr.value;
+    in-out property<int> statDex : statBoxDex.value;
+    in-out property<int> statInt : statBoxInt.value;
+    in-out property<int> statWis : statBoxWis.value;
     
-
     callback request-increase-value();
     callback print-char();
-    VerticalBox {        
-        statBoxStr := CharacterStat { statname: "STR"; value: 12; }
-        statBoxDex := CharacterStat { statname: "DEX"; value: 14; }
-        statBoxInt := CharacterStat { statname: "INT"; }
-        statBoxWis := CharacterStat { statname: "WIS"; }
+    callback reroll-char();
 
+    callback dicerollStr <=> statBoxStr.diceroll;
+    callback dicerollDex <=> statBoxDex.diceroll;
+    callback dicerollInt <=> statBoxInt.diceroll;
+    callback dicerollWis <=> statBoxWis.diceroll;
+
+    VerticalBox {        
+        statBoxStr := CharacterStat { statname: "STR"; value: 10; }
+        statBoxDex := CharacterStat { statname: "DEX"; value: 11; }
+        statBoxInt := CharacterStat { statname: "INT"; value: 12; }
+        statBoxWis := CharacterStat { statname: "WIS"; value: 13; }
+
+    
         HorizontalBox {             
             Button {
+                text: "Print";
                 clicked => {
                     root.print-char();
                 }
-                text: "Print";
+                
+            }
+            Button { 
+                text:"Reroll"; 
+                clicked => {
+                    root.reroll-char();
+                }
             }
         }
      }
